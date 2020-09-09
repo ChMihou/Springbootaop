@@ -20,14 +20,16 @@ import java.util.Arrays;
 public class WebLogAspect {
     private final Logger logger = LoggerFactory.getLogger(WebLogAspect.class);
     ThreadLocal<Long> startTime = new ThreadLocal<>();
-    /**
-     第一个*表示返回任何类型,com.cxy.shibernate.controller下任何类,任何方法,任何参数
-     也可以加入参数限定例如com.cxy.shibernate.controller.*.*(..)&&args(name,..)
 
-     下面那中表示方法也是对的,表示com.cxy.shibernate.下面任何子包下任何方法,任何参数
+    /**
+     * 第一个*表示返回任何类型,com.cmh.aop.controller下任何类,任何方法,任何参数
+     * 也可以加入参数限定例如com.cmh.aop.controller.*.*(..)&&args(name,..)
+     * <p>
+     * 下面那中表示方法也是对的,表示com.cmh.aop.下面任何子包下任何方法,任何参数
      **/
-    @Pointcut("execution(public * com.cmh.aop..*.*(..))")
-    public void webLog(){}
+    @Pointcut("execution(public * com.cmh.aop.controller.*.*(..))")
+    public void webLog() {
+    }
 
     @Before("webLog()")
     public void doBefore(JoinPoint joinPoint) throws Throwable {
@@ -44,7 +46,7 @@ public class WebLogAspect {
         logger.info("IP : " + request.getRemoteAddr());
         logger.info("CLASS_METHOD : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
         logger.info("ARGS : " + Arrays.toString(joinPoint.getArgs()));
-        logger.info("ip:"+ipAddress);
+        logger.info("ip:" + ipAddress);
 
     }
 
@@ -54,7 +56,6 @@ public class WebLogAspect {
         logger.info("RESPONSE : " + ret);
         logger.info("SPEND TIME : " + (System.currentTimeMillis() - startTime.get()));
     }
-
 
 
 }
