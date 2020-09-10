@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.0/css/bootstrap.min.css}">
+    <title>error</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 text-center">
+                <div th:if="${error_msg}">
+                    <p>服务器开了个小差</p>
+                    <div class="pb-3">The server made a little errand</div>
+                    <p>error message：<span th:text="${error_msg}"></span></p>
+                </div>
+                <div th:unless="${error_msg}">
+                    <h3>对不起，您访问的页面不存在</h3>
+                    <div class="pb-3">Sorry, the page you visited does not exist</div>
+                </div>
+                <div class="pt-3">
+                    <a href="javascript:;" onclick="history.back(-1)" class="btn btn-outline-secondary btn-sm">Go back</a>
+                    <a href="/hello" class="btn btn-outline-secondary btn-sm ml-2">Go home</a>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+    </div>
+</body>
+</html>
