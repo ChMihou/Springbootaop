@@ -34,6 +34,12 @@ public class WebLogAspect {
     public void webLog(PointcutAnnotation pointcutAnnotation) {
     }
 
+    /**
+     * @description 进入方法之前拦截操作日志
+     * @param joinPoint
+     * @param pointcutAnnotation
+     * @throws Throwable
+     */
     @Before("webLog(pointcutAnnotation)")
     public void doBefore(JoinPoint joinPoint, PointcutAnnotation pointcutAnnotation) throws Throwable {
         long time = pointcutAnnotation.timeout();
@@ -54,6 +60,13 @@ public class WebLogAspect {
 
     }
 
+    /**
+     * @description 环绕方法前后，通过session的token信息进行表单重复提交拦截
+     * @param pjp
+     * @param pointcutAnnotation
+     * @return
+     * @throws Throwable
+     */
     @Around("webLog(pointcutAnnotation)")
     public Object around(ProceedingJoinPoint pjp,PointcutAnnotation pointcutAnnotation) throws Throwable {
         logger.info("around-begin");
@@ -69,6 +82,12 @@ public class WebLogAspect {
         return o;
     }
 
+    /**
+     * @description 处理完请求，返回内容
+     * @param ret
+     * @param pointcutAnnotation
+     * @throws Throwable
+     */
     @AfterReturning(returning = "ret", pointcut = "webLog(pointcutAnnotation)")
     public void doAfterReturning(Object ret,PointcutAnnotation pointcutAnnotation) throws Throwable {
         // 处理完请求，返回内容
