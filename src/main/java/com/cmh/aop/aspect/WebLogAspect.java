@@ -1,18 +1,19 @@
 package com.cmh.aop.aspect;
 
+import com.cmh.aop.annotation.PointcutAnnotation;
 import com.cmh.aop.utils.HttpContextUtils;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import java.util.Objects;
 
 @Aspect
 @Order(5)
@@ -20,6 +21,8 @@ import java.util.Arrays;
 public class WebLogAspect {
     private final Logger logger = LoggerFactory.getLogger(WebLogAspect.class);
     ThreadLocal<Long> startTime = new ThreadLocal<>();
+    @Autowired
+    private HttpServletRequest request;
 
     /**
      * 第一个*表示返回任何类型,com.cmh.aop.controller下任何类,任何方法,任何参数
@@ -27,14 +30,15 @@ public class WebLogAspect {
      * <p>
      * 下面那中表示方法也是对的,表示com.cmh.aop.下面任何子包下任何方法,任何参数
      **/
-    @Pointcut("execution(public * com.cmh.aop.controller.*.*(..))")
-    public void webLog() {
+    @Pointcut("@annotation(pointcutAnnotation)")
+    public void webLog(PointcutAnnotation pointcutAnnotation) {
     }
 
-    @Before("webLog()")
-    public void doBefore(JoinPoint joinPoint) throws Throwable {
+    @Before("webLog(pointcutAnnotation)")
+    public void doBefore(JoinPoint joinPoint, PointcutAnnotation pointcutAnnotation) throws Throwable {
+        long time = pointcutAnnotation.timeout();
         startTime.set(System.currentTimeMillis());
-
+        System.out.println(time);
         // 接收到请求，记录请求内容
 
         HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
@@ -50,8 +54,23 @@ public class WebLogAspect {
 
     }
 
-    @AfterReturning(returning = "ret", pointcut = "webLog()")
-    public void doAfterReturning(Object ret) throws Throwable {
+    @Around("webLog(pointcutAnnotation)")
+    public Object around(ProceedingJoinPoint pjp,PointcutAnnotation pointcutAnnotation) throws Throwable {
+        logger.info("around-begin");
+        String formToken = request.getParameter("token");
+        String token = (String) request.getSession().getAttribute("token");
+        System.out.println(token);
+        System.out.println(formToken);
+        if (!Objects.equals(formToken, token)) {
+            throw new RepeatableCommitException("表单重复提交");
+        }
+        Object o = pjp.proceed();
+        logger.info("around-end");
+        return o;
+    }
+
+    @AfterReturning(returning = "ret", pointcut = "webLog(pointcutAnnotation)")
+    public void doAfterReturning(Object ret,PointcutAnnotation pointcutAnnotation) throws Throwable {
         // 处理完请求，返回内容
         logger.info("RESPONSE : " + ret);
         logger.info("SPEND TIME : " + (System.currentTimeMillis() - startTime.get()));
