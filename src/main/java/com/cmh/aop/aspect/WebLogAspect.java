@@ -70,6 +70,7 @@ public class WebLogAspect {
     @Around("webLog(pointcutAnnotation)")
     public Object around(ProceedingJoinPoint pjp,PointcutAnnotation pointcutAnnotation) throws Throwable {
         logger.info("around-begin");
+        //切入方法前校验
         String formToken = request.getParameter("token");
         String token = (String) request.getSession().getAttribute("token");
         System.out.println(token);
@@ -77,6 +78,7 @@ public class WebLogAspect {
         if (!Objects.equals(formToken, token)) {
             throw new RepeatableCommitException("表单重复提交");
         }
+        //方法切入点
         Object o = pjp.proceed();
         logger.info("around-end");
         return o;
