@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/hello")
+@RequestMapping("hello")
 public class HelloController {
 
     @RequestMapping
@@ -20,7 +20,7 @@ public class HelloController {
         String token = UUID.randomUUID().toString();
         session.setAttribute("token",token);
         System.out.println(token);
-        return "/test/hello";
+        return "test/hello";
     }
 
     @RequestMapping(method = RequestMethod.POST)

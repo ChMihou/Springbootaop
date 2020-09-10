@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
      */
     private String errorPage(Exception e, Model model) {
         model.addAttribute("error_msg", e.getMessage());
-        return "/test/errorPage";
+        return "test/errorPage";
     }
 
     /**

@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-<form action="/hello" method="post">
+<form action="hello" method="post">
     <input type="hidden" name="token" th:value="${session.token}"><br/>
     <div th:text="${session.token}"></div><br/>
     <input type="text" value="" name="name"><br/>

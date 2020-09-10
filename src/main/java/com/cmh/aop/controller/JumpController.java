@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class JumpController {
-    @RequestMapping("/errorPage")
+    @RequestMapping("errorPage")
     public String error() {
-        return "/test/errorPage";
+        return "test/errorPage";
     }
 }
